@@ -9,8 +9,14 @@ import com.google.inject.Provides;
 import net.runelite.api.Point;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.*;
+import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectSpawned;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GraphicsObjectCreated;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.ObjectID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -46,7 +52,6 @@ public class CoxCMAutoSplitter extends Plugin {
     private CoxCMAutoSplitterPanel panel;
 
     // for determining raid start
-    private static final int RAID_STATE_VARBIT = 5425;
     private int prevRaidState = -1;
 
     // Room state
@@ -71,7 +76,7 @@ public class CoxCMAutoSplitter extends Plugin {
         if (client.getGameState() != GameState.LOGGED_IN)
             return;
 
-        if (clock() == 0 || !client.isInInstancedRegion()) {
+        if (client.getVarbitValue(VarbitID.RAIDS_TIMER) == 0 || !client.isInInstancedRegion()) {
             in_raid = false;
             return;
         }
@@ -196,7 +201,7 @@ public class CoxCMAutoSplitter extends Plugin {
     public void onVarbitChanged(VarbitChanged e)
     {
         // when the raid starts
-        int raidState = client.getVarbitValue(RAID_STATE_VARBIT);
+        int raidState = client.getVarbitValue(VarbitID.RAIDS_CLIENT_PROGRESS);
         if (prevRaidState == 0 && raidState == 1){
             if (config.autoReset()) {
                 send_reset();
@@ -218,10 +223,6 @@ public class CoxCMAutoSplitter extends Plugin {
             writer.write("reset\r\n");
             writer.flush();
         } catch (Exception ignored) { }
-    }
-
-    private int clock() {
-        return client.getVarbitValue(6386);
     }
 
     @Override
