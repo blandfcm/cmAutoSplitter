@@ -10,6 +10,7 @@ import net.runelite.api.Point;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
+import net.runelite.api.gameval.ObjectID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -125,31 +126,31 @@ public class CoxCMAutoSplitter extends Plugin {
     public void onGameObjectSpawned(GameObjectSpawned e) {
         GameObject go = e.getGameObject();
         switch (go.getId()) {
-            case 29881: // Olm spawned
+            case ObjectID.OLM_HEAD: // Olm spawned
                 if (olm_phase < 0) {
                     olm_phase = ~olm_phase;
                 }
                 break;
-            case 30013:
+            case ObjectID.RAIDS_MEAT_TREE_EMPTY:
                 // Muttadile tree placeholder spawned after tree cut
                 if (config.splitMuttadileTree() && !treecut && !config.regular()) {
                     send_split();
                     treecut = true;
                 }
                 break;
-            case 26209: // shamans/thieving/guardians
-            case 29741: // mystics
-            case 29749: // tightrope
-            case 29753: // crabs
-            case 29754:
-            case 29755:
-            case 29756:
-            case 29757:
-            case 29876: // ice
-            case 30016: // vasa
-            case 30017: // tekton/vanguards
-            case 30018: // mutt
-            case 30070: // vespula
+            case ObjectID.INVISIBLE_TYPE8_BLOCKING: // shamans/thieving/guardians
+            case ObjectID.RAIDS_SKELETALMYSTICS_SYMBOL: // mystics
+            case ObjectID.RAIDS_TIGHTROPE_BARRIER: // tightrope
+            case ObjectID.RAIDS_LASERCRABS_BIGCRYSTAL_1: // crabs
+            case ObjectID.RAIDS_LASERCRABS_BIGCRYSTAL_2:
+            case ObjectID.RAIDS_LASERCRABS_BIGCRYSTAL_3:
+            case ObjectID.RAIDS_LASERCRABS_BIGCRYSTAL_4:
+            case ObjectID.RAIDS_LASERCRABS_BIGCRYSTAL_5:
+            case ObjectID.RAIDS_ICEDEMON_SNOW: // ice
+            case ObjectID.RAIDS_BLOCKAGE_PURPLE_SMALL: // vasa
+            case ObjectID.RAIDS_BLOCKAGE_ORANGE: // tekton/vanguards
+            case ObjectID.RAIDS_BLOCKAGE_GREEN: // mutt
+            case ObjectID.RAIDS_VESPULA_BOIL_BLOCKING: // vespula
                 Point pt = go.getSceneMinLocation();
                 int p = go.getPlane();
                 int x = pt.getX();
@@ -168,13 +169,13 @@ public class CoxCMAutoSplitter extends Plugin {
 
     @Subscribe
     public void onGameObjectDespawned(GameObjectDespawned e) {
-        if (e.getGameObject().getId() == ObjectID.LARGE_HOLE_29881) {
+        if (e.getGameObject().getId() == ObjectID.OLM_HEAD) {
             send_split();
             olm_phase = ~olm_phase;
         }
     }
 
-    private static final int SMOKE_PUFF = 188;
+    private static final int SMOKE_PUFF = ObjectID.GNOME_GLIDERCRASHED;
 
     @Subscribe
     public void onGraphicsObjectCreated(GraphicsObjectCreated e) {
