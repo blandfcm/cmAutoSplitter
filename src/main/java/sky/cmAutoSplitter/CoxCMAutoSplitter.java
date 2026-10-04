@@ -114,12 +114,12 @@ public class CoxCMAutoSplitter extends Plugin {
         }
     }
 
-    private static final String FL_COMPLETE_MES = "level complete! Duration: </col><col=ff0000>";
+    private static final String FL_COMPLETE_MES = "level complete! Duration:";
 
     @Subscribe
     public void onChatMessage(ChatMessage e) {
         String mes = e.getMessage();
-        if (e.getType() == ChatMessageType.FRIENDSCHATNOTIFICATION && mes.startsWith("<col=ef20ff>")) {
+        if (e.getType() == ChatMessageType.FRIENDSCHATNOTIFICATION) {
             int duration = mes.indexOf(FL_COMPLETE_MES);
             boolean is_fl_time = duration != -1;
 
