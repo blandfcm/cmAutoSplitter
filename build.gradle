@@ -11,7 +11,7 @@ repositories {
 }
 
 def runeLiteVersion = 'latest.release'
-def pluginMainClass = 'sky.cmAutoSplitter.CoxCMAutoSplitter'
+def pluginMainClass = 'sky.cmAutoSplitter.autoSplitterTest'
 
 dependencies {
     compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
@@ -24,9 +24,9 @@ dependencies {
     testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
 }
 
-group = 'com.example'
-version = '1.3'
-sourceCompatibility = '1.8'
+group = 'sky.cmAutoSplitter'
+version = '1.4'
+sourceCompatibility = '1.11'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
