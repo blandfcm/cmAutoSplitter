@@ -76,7 +76,7 @@ public class CoxCMAutoSplitter extends Plugin {
         if (client.getGameState() != GameState.LOGGED_IN)
             return;
 
-        if (client.getVarbitValue(VarbitID.RAIDS_TIMER) == 0 || !client.isInInstancedRegion()) {
+        if (client.getVarbitValue(VarbitID.RAIDS_TIMER) == 0 || !client.getTopLevelWorldView().isInstance()) {
             in_raid = false;
             return;
         }
@@ -86,17 +86,26 @@ public class CoxCMAutoSplitter extends Plugin {
             iceout = false;
             treecut = false;
         }
+
+        int topLevelX = client.getTopLevelWorldView().getBaseX();
+        int topLevelY = client.getTopLevelWorldView().getBaseY();
+        int topLevelP = client.getTopLevelWorldView().getPlane();
+        CollisionData[] collisionMaps = client.getTopLevelWorldView().getCollisionMaps();
+        if (collisionMaps == null) {
+            return;
+        }
+
         for (int i = 0; i < 16; i++) {
             if (this.cryp[i] == -1)
                 continue;
             int p = cryp[i];
-            int x = cryx[i] - client.getBaseX();
-            int y = cryy[i] - client.getBaseY();
-            if (p != client.getPlane() || x < 0 || x >= 104 || y < 0 || y >= 104) {
+            int x = cryx[i] - topLevelX;
+            int y = cryy[i] - topLevelY;
+            if (p != topLevelP || x < 0 || x >= 104 || y < 0 || y >= 104) {
                 this.cryp[i] = -1;
                 continue;
             }
-            int flags = client.getCollisionMaps()[p].getFlags()[x][y];
+            int flags = collisionMaps[p].getFlags()[x][y];
             if ((flags & 0x100) == 0 && !config.regular()) {
                 // combat and puzzle rooms
                 send_split();
@@ -160,13 +169,13 @@ public class CoxCMAutoSplitter extends Plugin {
                 int p = go.getPlane();
                 int x = pt.getX();
                 int y = pt.getY();
-                int template = client.getInstanceTemplateChunks()[p][x / 8][y / 8];
+                int template = client.getTopLevelWorldView().getInstanceTemplateChunks()[p][x / 8][y / 8];
                 int roomtype = getroom_type(template);
                 if (roomtype < 16) {
                     // add obstacle to list
                     cryp[roomtype] = p;
-                    cryx[roomtype] = x + client.getBaseX();
-                    cryy[roomtype] = y + client.getBaseY();
+                    cryx[roomtype] = x + client.getTopLevelWorldView().getBaseX();
+                    cryy[roomtype] = y + client.getTopLevelWorldView().getBaseY();
                 }
                 break;
         }
@@ -186,10 +195,10 @@ public class CoxCMAutoSplitter extends Plugin {
     public void onGraphicsObjectCreated(GraphicsObjectCreated e) {
         if (config.splitIcePop() && e.getGraphicsObject().getId() == SMOKE_PUFF && !iceout && !config.regular()) {
             WorldPoint wp = WorldPoint.fromLocal(client, e.getGraphicsObject().getLocation());
-            int p = client.getPlane();
-            int x = wp.getX() - client.getBaseX();
-            int y = wp.getY() - client.getBaseY();
-            int template = client.getInstanceTemplateChunks()[p][x / 8][y / 8];
+            int p = client.getTopLevelWorldView().getPlane();
+            int x = wp.getX() - client.getTopLevelWorldView().getBaseX();
+            int y = wp.getY() - client.getTopLevelWorldView().getBaseY();
+            int template = client.getTopLevelWorldView().getInstanceTemplateChunks()[p][x / 8][y / 8];
             if (CoxUtil.getroom_type(template) == ICE_DEMON) {
                 send_split();
                 iceout = true;
