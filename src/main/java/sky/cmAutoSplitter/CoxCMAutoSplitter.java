@@ -87,11 +87,11 @@ public class CoxCMAutoSplitter extends Plugin {
             treecut = false;
         }
 
-        int topLevelX = client.getTopLevelWorldView().getBaseX();
-        int topLevelY = client.getTopLevelWorldView().getBaseY();
-        int topLevelP = client.getTopLevelWorldView().getPlane();
-        CollisionData[] collisionMaps = client.getTopLevelWorldView().getCollisionMaps();
-        if (collisionMaps == null) {
+        int top_level_x = client.getTopLevelWorldView().getBaseX();
+        int top_level_y = client.getTopLevelWorldView().getBaseY();
+        int top_level_p = client.getTopLevelWorldView().getPlane();
+        CollisionData[] collision_maps = client.getTopLevelWorldView().getCollisionMaps();
+        if (collision_maps == null) {
             return;
         }
 
@@ -99,13 +99,13 @@ public class CoxCMAutoSplitter extends Plugin {
             if (this.cryp[i] == -1)
                 continue;
             int p = cryp[i];
-            int x = cryx[i] - topLevelX;
-            int y = cryy[i] - topLevelY;
-            if (p != topLevelP || x < 0 || x >= 104 || y < 0 || y >= 104) {
+            int x = cryx[i] - top_level_x;
+            int y = cryy[i] - top_level_y;
+            if (p != top_level_p || x < 0 || x >= 104 || y < 0 || y >= 104) {
                 this.cryp[i] = -1;
                 continue;
             }
-            int flags = collisionMaps[p].getFlags()[x][y];
+            int flags = collision_maps[p].getFlags()[x][y];
             if ((flags & 0x100) == 0 && !config.regular()) {
                 // combat and puzzle rooms
                 send_split();
